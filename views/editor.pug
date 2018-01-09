@@ -1,0 +1,17 @@
+form(action="/post/add", method="POST")
+    label()="title: "
+    br
+    input(type="text" name="title")
+    br
+    label(for="body")="body: "
+    br
+    textarea#postbody(name="post_body", cols="30", rows="10")
+    br
+    input(type="submit", value="Submit" method="POST" action="/post/add")   
+
+div
+    ul
+        each post in posts
+            li
+                h2=post.title
+                p=post.body

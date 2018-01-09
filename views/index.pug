@@ -1,0 +1,14 @@
+html
+    head
+        title="CMS Project"
+    body
+        h1="Admin view"
+        div
+            ul
+                each post in posts
+                    li
+                        h2=post.id +'. '+ post.title
+                        form(action="/post/delete/"+post.id, method="POST")
+                            button(type="submit")="X"
+                        br
+                        p=post.body

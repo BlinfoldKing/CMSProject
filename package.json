@@ -1,0 +1,30 @@
+{
+  "name": "cms",
+  "version": "1.0.0",
+  "description": "simple cms",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo hello world",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "Ganesha Danu Enastika",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^4.15.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-google": "^0.9.1",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-react": "^7.5.1",
+    "eslint-plugin-standard": "^3.0.1",
+    "nodemon": "^1.14.8"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "pug": "^2.0.0-rc.4"
+  }
+}
