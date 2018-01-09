@@ -8,7 +8,7 @@ html
                 each post in posts
                     li
                         h2=post.id +'. '+ post.title
-                        form(action="/post/delete/"+post.id, method="POST")
-                            button(type="submit")="X"
+                            form(action="/post/delete/"+post.id, method="POST")
+                                button(type="submit")="X"
                         br
                         p=post.body

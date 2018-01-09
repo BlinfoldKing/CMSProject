@@ -64,13 +64,13 @@ app.post('/post/add', (req, res) => {
 })
 
 app.get('/post/get/:id', (req, res) => {
-    if (req.param('id') === 0) {
+    if (req.params.id === 0) {
         res.redirect('getpost/')
-    } else if (posts[req.param('id') - 1] != null) {
+    } else if (posts[req.params.id - 1] != null) {
         res.json({
             status: 200,
             timestamp: new Date(),
-            post: posts[req.param('id') - 1]
+            post: posts[req.params.id - 1]
         })
     } else {
         res.json({
@@ -81,10 +81,10 @@ app.get('/post/get/:id', (req, res) => {
 
 app.post('/post/delete/:id', (req, res) => {
     if (isLogin) {
-        console.log(req.param('id'))
-        posts.splice(req.param('id') - 1, 1)
+        console.log(req.params.id)
+        posts.splice(req.params.id - 1, 1)
         posts.forEach((post) => {
-            if (post.id > req.param('id')) {
+            if (post.id > req.params.id) {
                 post.id--
             }
         })
@@ -95,6 +95,6 @@ app.post('/post/delete/:id', (req, res) => {
 
 app.get('*', (req, res) => {
     res.json({
-        status:4041
+        status:404
     })
 })
