@@ -1,45 +1,42 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const MongoClient = require ('mongodb').MongoClient
+const MongoClient = require('mongodb').MongoClient
 
 const port = process.env.port || 3000
 const URL = 'mongodb://localhost:27017/'
 const dbName = "BlogData"
 
+
+/*
+
+TODO:
+    -make a functional crud to monngodb
+    -prevent mutiple instance of data
+*/
+
+
 const app = express()
 
-let posts = [{
-    id: 1,
-    title: 'hello world',
-    body: 'Cupidatat et exercitation in fugiat nostrud esse fugiat consequat pariatur proident in aliquip dolor.'
-},
-{
-    id: 2,
-    title: 'hello world',
-    body: 'Cupidatat et exercitation in fugiat nostrud esse fugiat consequat pariatur proident in aliquip dolor.'
-}
-]
-
-
-MongoClient.connect(URL, (err, client) => {
-    if (err) throw err
-
-    let db = client.db(dbName)
-    
-    db.collection('Posts').insert(posts, (err, res) => {
-       db.collection('Posts').find({title : "hello world"}).toArray( (err, docs) => {
-        console.log(docs)
-       })
+GetData = (coll, query, cb) => {
+    MongoClient.connect(URL, (err, client) => {
+        db = client.db(dbName)
+        db.collection(coll).find(query).toArray((err, docs) => {
+            cb(docs)
+        })
     })
-    console.log('mongo server connected')
-})
+}
 
-//const isLogin = true
-
-
-app.listen(port, (req, res) => {
-    console.log(`App listening on port ${port}!`)
-})
+InsertData = (coll, data) => {
+    MongoClient.connect(URL, (err, client) => {
+        db = client.db(dbName)
+        db.collection(coll).insert(data ,() => {
+            db.collection(coll).find({}).toArray((err, docs) => {
+                //console.log(docs)
+            })
+            //console.log('data inserted')
+        })
+    })
+}
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -48,9 +45,22 @@ app.use(bodyParser.urlencoded({
 
 app.set('view engine', 'pug')
 
+app.listen(port, () => {
+    GetData('Posts', {}, (docs) => {
+        console.log(docs.length)
+    })
+    console.log(`listening to ${port}`)
+})
+
 app.get('/', (req, res) => {
-    res.render('index', {
-        posts
+    InsertData('Posts',{
+        title : 'hello world',
+        post : 'lorem lorem lorem'
+    })
+
+    
+    GetData('Posts', {} , (docs) => {
+        res.render('index', { posts : docs })
     })
 })
 
@@ -60,9 +70,8 @@ app.get('/post', (req, res) => {
 
 app.get('/post/get', (req, res) => {
     res.json({
-        status: 200,
-        timestamp: new Date(),
-        posts
+        status : 200,
+        posts : GetData('Posts')
     })
 })
 
@@ -108,12 +117,21 @@ app.post('/post/delete/:id', (req, res) => {
             }
         })
         res.redirect('/')
-    }else
+    } else
         res.redirect('/')
 })
 
 app.get('*', (req, res) => {
     res.json({
-        status:404
+        status: 404
     })
 })
+
+
+
+
+
+
+
+
+
