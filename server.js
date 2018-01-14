@@ -1,22 +1,41 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const MongoClient = require ('mongodb').MongoClient
+
+const port = process.env.port || 3000
+const URL = 'mongodb://localhost:27017/'
+const dbName = "BlogData"
 
 const app = express()
 
-const port = 3000
-const isLogin = true
-
 let posts = [{
-        id: 1,
-        title: 'hello world',
-        body: 'Cupidatat et exercitation in fugiat nostrud esse fugiat consequat pariatur proident in aliquip dolor.'
-    },
-    {
-        id: 2,
-        title: 'hello world',
-        body: 'Cupidatat et exercitation in fugiat nostrud esse fugiat consequat pariatur proident in aliquip dolor.'
-    }
+    id: 1,
+    title: 'hello world',
+    body: 'Cupidatat et exercitation in fugiat nostrud esse fugiat consequat pariatur proident in aliquip dolor.'
+},
+{
+    id: 2,
+    title: 'hello world',
+    body: 'Cupidatat et exercitation in fugiat nostrud esse fugiat consequat pariatur proident in aliquip dolor.'
+}
 ]
+
+
+MongoClient.connect(URL, (err, client) => {
+    if (err) throw err
+
+    let db = client.db(dbName)
+    
+    db.collection('Posts').insert(posts, (err, res) => {
+       db.collection('Posts').find({title : "hello world"}).toArray( (err, docs) => {
+        console.log(docs)
+       })
+    })
+    console.log('mongo server connected')
+})
+
+//const isLogin = true
+
 
 app.listen(port, (req, res) => {
     console.log(`App listening on port ${port}!`)
