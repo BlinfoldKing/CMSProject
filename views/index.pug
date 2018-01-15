@@ -5,10 +5,10 @@ html
         h1="Admin view"
         div
             ul
-                each post in posts
+                each post,index in posts
                     ol
-                        h2=post.title
-                            form(action="/post/delete/"+post.id, method="POST")
+                        h2=index+' '+post.title
+                            form(action="/post/delete/"+post._id, method="POST")
                                 button(type="submit")="X"
                         br
                         p=post.body

@@ -10,10 +10,10 @@ const dbName = "BlogData"
 /*
 
 TODO:
-    -make a functional crud to monngodb
-    -prevent mutiple instance of data
+    -implement delete operation
 */
 
+isLogin = true
 
 const app = express()
 
@@ -29,11 +29,15 @@ GetData = (coll, query, cb) => {
 InsertData = (coll, data) => {
     MongoClient.connect(URL, (err, client) => {
         db = client.db(dbName)
-        db.collection(coll).insert(data ,() => {
-            db.collection(coll).find({}).toArray((err, docs) => {
-                //console.log(docs)
-            })
-            //console.log('data inserted')
+        db.collection(coll).insert(data)
+    })
+}
+
+DeleteData = (coll, query,cb) => {
+    MongoClient.connect(URL, (err,client) => {
+        db = client.db(dbName)
+        db.collection(coll).deleteOne(query,(err, obj) => {
+            cb(obj)
         })
     })
 }
@@ -53,10 +57,10 @@ app.listen(port, () => {
 })
 
 app.get('/', (req, res) => {
-    InsertData('Posts',{
-        title : 'hello world',
-        post : 'lorem lorem lorem'
-    })
+    // InsertData('Posts',{
+    //     title : 'hello world',
+    //     post : 'lorem lorem lorem'
+    // })
 
     
     GetData('Posts', {} , (docs) => {
@@ -69,25 +73,22 @@ app.get('/post', (req, res) => {
 })
 
 app.get('/post/get', (req, res) => {
-    res.json({
-        status : 200,
-        posts : GetData('Posts')
+    GetData('Posts', {} , (docs) => {
+        res.json({ posts : docs })
     })
 })
 
 app.get('/post/form', (req, res) => {
-    res.render('editor', {
-        posts
+    GetData('Posts', {}, (docs) => {
+        res.render('editor', {posts : docs})
     })
 })
 
 app.post('/post/add', (req, res) => {
-    posts.push({
-        id: posts.length + 1,
-        title: req.body.title,
-        body: req.body.post_body
+    InsertData('Posts',{
+        title : req.body.title,
+        body : req.body.post_body
     })
-    console.log(`${posts[posts.length - 1].title} added`)
     res.redirect('/')
 })
 
@@ -109,15 +110,12 @@ app.get('/post/get/:id', (req, res) => {
 
 app.post('/post/delete/:id', (req, res) => {
     if (isLogin) {
-        console.log(req.params.id)
-        posts.splice(req.params.id - 1, 1)
-        posts.forEach((post) => {
-            if (post.id > req.params.id) {
-                post.id--
-            }
-        })
+        DeleteData('Posts', {_id : req.params.id} , (docs) => {
+            console.log(`${req.params.id} deleted`)
+
+    })
         res.redirect('/')
-    } else
+    } else 
         res.redirect('/')
 })
 
@@ -126,12 +124,3 @@ app.get('*', (req, res) => {
         status: 404
     })
 })
-
-
-
-
-
-
-
-
-
