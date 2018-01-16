@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const MongoClient = require('mongodb').MongoClient
-
+const mongodb = require('mongodb')
 const port = process.env.port || 3000
 const URL = 'mongodb://localhost:27017/'
 const dbName = "BlogData"
@@ -36,8 +36,8 @@ InsertData = (coll, data) => {
 DeleteData = (coll, query,cb) => {
     MongoClient.connect(URL, (err,client) => {
         db = client.db(dbName)
-        db.collection(coll).deleteOne(query,(err, obj) => {
-            cb(obj)
+        db.collection(coll).deleteOne(query,(err, result) => {
+            cb(result)
         })
     })
 }
@@ -110,7 +110,7 @@ app.get('/post/get/:id', (req, res) => {
 
 app.post('/post/delete/:id', (req, res) => {
     if (isLogin) {
-        DeleteData('Posts', {_id : req.params.id} , (docs) => {
+        DeleteData('Posts', {_id : new mongodb.ObjectID(req.params.id)} , () => {
             console.log(`${req.params.id} deleted`)
 
     })
